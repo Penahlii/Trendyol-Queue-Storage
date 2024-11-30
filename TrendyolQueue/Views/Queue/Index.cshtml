@@ -1,0 +1,37 @@
+﻿@model QueueViewModel
+
+<h1>Queue Discount Management</h1>
+
+@if (TempData["Message"] != null)
+{
+    <div style="color: green; font-weight: bold;">@TempData["Message"]</div>
+}
+
+@if (Model.QueueExists)
+{
+    @if (!string.IsNullOrEmpty(Model.DiscountCode))
+    {
+        <p>Discount Code: <strong>@Model.DiscountCode</strong></p>
+        <p>Remaining Count: <strong>@Model.RemainingCount</strong></p>
+        <form asp-action="ApplyDiscount" method="post">
+            <input type="hidden" name="discountCode" value="@Model.DiscountCode" />
+            <button type="submit" @(Model.RemainingCount <= 0 ? "disabled" : "")>Apply Discount</button>
+        </form>
+        <form asp-action="RemoveDiscount" method="post">
+            <input type="hidden" name="discountCode" value="@Model.DiscountCode" />
+            <input type="hidden" name="remainingCount" value="@Model.RemainingCount" />
+            <button type="submit" @(Model.RemainingCount > 0 ? "" : "disabled")>Remove Discount</button>
+        </form>
+    }
+    else
+    {
+        <p>No discount code available in the queue.</p>
+    }
+}
+else
+{
+    <p>The queue does not exist. Please set up the queue in Azure Storage.</p>
+}
+
+
+<a href="@Url.Action("PopulateQueues", "Queue")" class="btn btn-primary">Populate Queues</a>
